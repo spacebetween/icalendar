@@ -106,12 +106,46 @@ defmodule ICalendar.Util.KV do
     |> Enum.join("")
   end
 
+  def build("ATTACHMENTS", attachments) do
+    Enum.map(attachments, fn attachment ->
+      params =
+        for {key, val} <- attachment, key != :original_value, into: "" do
+          ";#{key}=#{val}"
+        end
+
+      "ATTACH#{params}:#{attachment.original_value}\n"
+    end)
+    |> Enum.join("")
+  end
+
+  def build("ORGANIZER", organizer) do
+    params =
+      for {key, val} <- organizer, key != :original_value, into: "" do
+        ";#{key}=#{val}"
+      end
+
+    "ORGANIZER#{params}:#{organizer.original_value}\n"
+  end
+
+  def build(key, value) when key in ["TZOFFSETFROM", "TZOFFSETTO"] and is_integer(value) do
+    value =
+      value
+      |> then(&if(&1 < 0, do: {"-", "#{&1 * -1}"}, else: {"+", "#{&1}"}))
+      |> then(fn {h, m} -> "#{h}#{String.pad_leading(m, 4, "0")}" end)
+
+    "#{key}:#{value}\n"
+  end
+
   def build(key, date = %DateTime{time_zone: "Etc/UTC"}) do
     "#{key}:#{Value.to_ics(date)}Z\n"
   end
 
   def build(key, date = %DateTime{}) do
     "#{key};TZID=#{date.time_zone}:#{Value.to_ics(date)}\n"
+  end
+
+  def build(key, values) when is_list(values) do
+    Enum.map(values, &build(key, &1))
   end
 
   def build(key, value) do
