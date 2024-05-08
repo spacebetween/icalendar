@@ -21,7 +21,41 @@ defmodule ICalendar.Event do
             modified: nil,
             organizer: nil,
             sequence: nil,
-            attendees: []
+            attendees: [],
+            attachments: [],
+            tzid: nil,
+            dtstamp: nil,
+            created: nil,
+            last_modified: nil,
+            transp: nil
+
+  @type t :: %__MODULE__{
+          summary: String.t(),
+          dtstart: DateTime.t(),
+          dtend: DateTime.t(),
+          rrule: map(),
+          exdates: list(DateTime.t()),
+          description: String.t(),
+          location: String.t(),
+          url: String.t(),
+          uid: String.t(),
+          prodid: String.t(),
+          status: String.t(),
+          categories: list(String.t()),
+          class: String.t(),
+          comment: String.t(),
+          geo: {float(), float()},
+          modified: DateTime.t(),
+          organizer: String.t(),
+          sequence: String.t(),
+          attendees: list(map()),
+          attachments: list(map()),
+          tzid: String.t(),
+          dtstamp: DateTime.t(),
+          created: DateTime.t(),
+          last_modified: DateTime.t(),
+          transp: String.t()
+        }
 end
 
 defimpl ICalendar.Serialize, for: ICalendar.Event do
