@@ -127,6 +127,33 @@ defmodule ICalendar.Util.KV do
     "ORGANIZER#{params}:#{organizer.original_value}\n"
   end
 
+  def build("ACTION", value) do
+    "ACTION:#{String.upcase(Value.to_ics(value))}\n"
+  end
+
+  def build("TRIGGER", value) when is_binary(value) and binary_part(value, 0, 1) == "-" do
+    # Handle duration-based triggers like "-PT15M"
+    "TRIGGER:#{value}\n"
+  end
+
+  def build("TRIGGER", value) when is_binary(value) and binary_part(value, 0, 1) == "P" do
+    # Handle duration-based triggers like "PT15M"
+    "TRIGGER:#{value}\n"
+  end
+
+  def build("TRIGGER", date = %DateTime{}) do
+    # Handle date-time based triggers
+    "TRIGGER;VALUE=DATE-TIME:#{Value.to_ics(date)}\n"
+  end
+
+  def build("REPEAT", value) when is_integer(value) do
+    "REPEAT:#{value}\n"
+  end
+
+  def build("DURATION", value) when is_binary(value) and binary_part(value, 0, 1) == "P" do
+    "DURATION:#{value}\n"
+  end
+
   def build(key, value) when key in ["TZOFFSETFROM", "TZOFFSETTO"] and is_integer(value) do
     value =
       value
