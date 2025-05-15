@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v2.0.0 - 2023-11-15
+
+- Added support for iCalendar alarm properties (ACTION, TRIGGER, REPEAT, DURATION)
+
 ## v1.1.2 - 2022-01-16
 
 - Handle calendars that wrap output such as Google Calendar
